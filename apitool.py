@@ -37,15 +37,19 @@ class SimpleApi:
         self.url = url
 
 
-    def set_header(self, key, value):
+    def set_headers(self, key, value):
         """
         Modifies header field.
         Usage: object.set_header(key, value)
         """
         self.__modifier(self.headers, key, value)
 
+    def set_headers_dict(self, headers):
+        for each in headers:
+            self.__modifier(self.headers, each, headers[each])
 
-    def set_param(self, key, value):
+
+    def set_params(self, key, value):
         """
         Modifies parameter field.
         Usage: object.set_header(key, value)
@@ -53,12 +57,12 @@ class SimpleApi:
         self.__modifier(self.params, key, value)
 
 
-    def set_param_dict(self, params):
+    def set_params_dict(self, params):
         for each in params:
             self.__modifier(self.params, each, params[each])
 
 
-    def Get(self, timeout = 6, sleep = 0.5, max_retry = 5,print_message = False):
+    def Get(self, timeout = 6, sleep = 0.5, max_retry = 5, print_message = False):
         """
         Easy requests.get() method.
         call requests.get() with preset headers field, param.
