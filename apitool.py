@@ -88,7 +88,7 @@ class SimpleApi:
                         print(f"...Retry No.{i}: FAILED")
                     if i == (max_retry - 1):
                         print("...API requests failed")
-                        exit(1)
+                        return None
                     else:
                         continue
 
@@ -96,7 +96,7 @@ class SimpleApi:
 
         if response.status_code != 200:
             print(f"ERROR: {response.status_code}, exit")
-            exit(1)
+            return None
 
         self.response = response.json()
 
@@ -146,6 +146,8 @@ class SimpleJson:
     def __init__(self, json_data = {}):
         self.json_data = json_data
 
+    def set(self, json_data):
+        self.json_data = json_data
 
     def access(self, target, data = None):
         """
@@ -154,16 +156,20 @@ class SimpleJson:
         """
         if not data:
             data = self.json_data
-        for v in data:
-            if v == target:
-                return data[v]
-            if type(data[v]) == dict:
-                return self.access(target, data[v])
+        queue = []
+        queue.append(data)
+        while queue:
+            value = queue.pop()
+            if type(value) == dict:
+                for key in value:
+                    if key == target:
+                        return value[key]
+                    queue.append(value[key])
 
-            if type(data[v]) == list:
-                if len(data[v]) > 0 and type(data[v][0]) == dict:
-                    for l in range(0, len(data[v])):
-                        return self.access(target, data[v][l])
+            elif type(value) == list:
+                for l in value:
+                    queue.append(l)
+
         return None
 
 
